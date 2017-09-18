@@ -1,4 +1,4 @@
 # koroker
-home made name entity recognition package
+name entity recognition
 
 ## to be done
