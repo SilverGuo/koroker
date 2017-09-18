@@ -63,7 +63,7 @@ class ConfigNER:
                  train_embed=True, 
                  num_epoch=15, 
                  dropout=0.5, 
-                 batch_size=100, 
+                 batch_size=20, 
                  lr_method='sgd', 
                  lr=0.001, 
                  lr_decay=0.8,

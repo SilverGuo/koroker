@@ -330,7 +330,6 @@ class DeepNER(object):
                                                                       idx, 
                                                                       train_loss))
             
-        _, _ = self.run_evaluate(sess, train, entity_dict)
         accuracy, f1 = self.run_evaluate(sess, dev, entity_dict)
         self.logger.info("dev acc {:04.2f}, f1 {:04.2f}".format(100*accuracy, 
                                                                 100*f1))
@@ -419,7 +418,6 @@ class DeepNER(object):
                         # stop train
                         break
             
-            _, _ = self.run_evaluate(sess, test, entity_dict)
 
         
     # test model
