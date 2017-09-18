@@ -54,7 +54,7 @@ class ConfigNER:
                  num_tag=9, 
                  use_crf=True, 
                  word_vocab_size=20313,
-                 char_vocab_size=85, 
+                 char_vocab_size=59, 
                  word_dim=300, 
                  char_dim=50, 
                  word_embed_path='', 
