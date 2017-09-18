@@ -17,9 +17,6 @@ class DataNER:
         # traverse
         for ltok in self.lsentence:
             for t in ltok:
-                # char level
-                for c in t:
-                    char_vocab.add(c)
                 # lower case
                 if self.config.word_lower:
                     t = t.lower()
@@ -28,6 +25,9 @@ class DataNER:
                     word_vocab.add('<NUM>')
                 else:
                     word_vocab.add(t)
+                # char level
+                for c in t:
+                    char_vocab.add(c)
         
         # add unknown
         word_vocab.add('<UNK>')
@@ -56,11 +56,6 @@ class DataNER:
             tok_word = []
             list_char = []
             for t in ltok:
-                # char level
-                tok_char = []
-                for c in t:
-                    tok_char.append(char_idx.get(c, char_idx['<UNK>']))
-                list_char.append(tok_char)
                 # lower case
                 if self.config.word_lower:
                     t = t.lower()
@@ -69,6 +64,11 @@ class DataNER:
                     tok_word.append(word_idx['<NUM>'])
                 else: 
                     tok_word.append(word_idx.get(t, word_idx['<UNK>']))
+                # char level
+                tok_char = []
+                for c in t:
+                    tok_char.append(char_idx.get(c, char_idx['<UNK>']))
+                list_char.append(tok_char)
             vec_word.append(tok_word)
             vec_char.append(list_char)
         

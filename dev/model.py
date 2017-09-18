@@ -370,7 +370,7 @@ class DeepNER(object):
         return accuracy, f1
 
     # train model
-    def train(self, train, dev, test, entity_dict):
+    def train(self, train, dev, entity_dict):
 
         best_score = 0
         saver = tf.train.Saver()
