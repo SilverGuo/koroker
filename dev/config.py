@@ -56,7 +56,7 @@ class ConfigNER:
                  word_vocab_size=20313,
                  char_vocab_size=59, 
                  word_dim=300, 
-                 char_dim=50, 
+                 char_dim=100, 
                  word_embed_path='', 
                  char_embed_path='', 
                  load_model=False, 
@@ -64,11 +64,11 @@ class ConfigNER:
                  num_epoch=15, 
                  dropout=0.5, 
                  batch_size=20, 
-                 lr_method='sgd', 
+                 lr_method='adam', 
                  lr=0.001, 
                  lr_decay=0.8,
                  early_stop=3,  
-                 char_hidden_size=50, 
+                 char_hidden_size=100, 
                  word_hidden_size=300, 
                  grad_clip=5.0):
 
