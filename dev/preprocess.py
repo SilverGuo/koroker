@@ -45,6 +45,15 @@ def preprocess(config):
 
     # create vocab
     vword, vchar = train_set.create_vocab()
+
+    # union with dev and test
+    vword_dev, vchar_dev = dev_set.create_vocab()
+    vword_test, vchar_test = test_set.create_vocab()
+
+    vword = vword.union(vword_dev).union(vword_test)
+    vchar = vchar.union(vchar_dev).union(vchar_test)
+
+
     # create entity dict
     entity_dict = train_set.create_entity()
 
