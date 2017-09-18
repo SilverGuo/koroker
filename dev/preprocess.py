@@ -1,5 +1,5 @@
 from config import ConfigPrep
-from util_sys import save_pickle
+from util_sys import save_pickle, embed_to_npy
 from util_data import DataNER, conll_norm, \
                       load_embed, generate_embed, \
                       generate_vocab
@@ -57,21 +57,21 @@ def preprocess(config):
     # create entity dict
     entity_dict = train_set.create_entity()
 
-    # load embed
+    # load word embed
     if config.word_embed_path != '':
         dembed = load_embed(config.word_embed_path)
         # union vocab
-        vword = list(vword.union(list(dembed.keys())[:config.num_word_embed]))
+        vword = list(vword.intersection(list(dembed.keys())))
         # embed generate
         wembed = generate_embed(vword, dembed)
-        """
-        TO BE DONE
-        """
+        # save to npy
+        embed_to_npy(wembed, os.path.join(config.embed_dir, 'word.npy'))
 
     else:
         # fix order
         vword = list(vword)
-        vchar = list(vchar)
+    
+    vchar = list(vchar)
     
     # temp solution for train step
     print(len(vword))

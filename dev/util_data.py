@@ -1,5 +1,9 @@
 import numpy as np
 
+# global
+UNK = 'unk'
+NUM = 'num'
+
 # dataset for ner
 class DataNER:
 
@@ -25,13 +29,13 @@ class DataNER:
                     t = t.lower()
                 # pure digit
                 if self.config.norm_digit and t.isdigit():
-                    word_vocab.add('<NUM>')
+                    word_vocab.add(NUM)
                 else:
                     word_vocab.add(t)
         
         # add unknown
-        word_vocab.add('<UNK>')
-        char_vocab.add('<UNK>')
+        word_vocab.add(UNK)
+        char_vocab.add(UNK)
         
         return word_vocab, char_vocab
 
@@ -59,16 +63,16 @@ class DataNER:
                 # char level
                 tok_char = []
                 for c in t:
-                    tok_char.append(char_idx.get(c, char_idx['<UNK>']))
+                    tok_char.append(char_idx.get(c, char_idx[UNK]))
                 list_char.append(tok_char)
                 # lower case
                 if self.config.word_lower:
                     t = t.lower()
                 # pure digit
                 if self.config.norm_digit and t.isdigit():
-                    tok_word.append(word_idx['<NUM>'])
+                    tok_word.append(word_idx[NUM])
                 else: 
-                    tok_word.append(word_idx.get(t, word_idx['<UNK>']))
+                    tok_word.append(word_idx.get(t, word_idx[UNK]))
             vec_word.append(tok_word)
             vec_char.append(list_char)
         
@@ -126,15 +130,13 @@ def load_embed(embed_path):
                 dembed[wvec[0]] = [float(v) for v in wvec[1:]]
     return dembed
 
-"""
-TO BE DONE
-"""
+
 # generate embed
 def generate_embed(vocab, embed):
     vocab_embed = []
     for tok in vocab:
-        pass
-    return
+        vocab_embed.append(embed[tok])
+    return np.array(vocab_embed, dtype=float)
 
 
 # generate vocab mapping from token list

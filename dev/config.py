@@ -25,6 +25,7 @@ class ConfigPrep:
         # output
         self.output_dir = output_dir
         self.data_dir = os.path.join(self.output_dir, 'data/')
+        self.embed_dir = os.path.join(self.output_dir, 'embed/')
         self.vocab_dir = os.path.join(self.output_dir, 'vocab/')
         self.entity_path = os.path.join(self.output_dir, 'entity.pkl')
 
@@ -53,8 +54,8 @@ class ConfigNER:
                  lstm_char = True, 
                  num_tag=9, 
                  use_crf=True, 
-                 word_vocab_size=20313,
-                 char_vocab_size=85, 
+                 word_vocab_size=22217,
+                 char_vocab_size=86, 
                  word_dim=300, 
                  char_dim=100, 
                  word_embed_path='', 
@@ -66,7 +67,7 @@ class ConfigNER:
                  batch_size=20, 
                  lr_method='adam', 
                  lr=0.001, 
-                 lr_decay=0.8,
+                 lr_decay=0.9,
                  early_stop=3,  
                  char_hidden_size=100, 
                  word_hidden_size=300, 

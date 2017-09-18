@@ -26,7 +26,8 @@ def config_parse(config_path):
                      test_path=config['input']['test'],
                      entity_path=config['input']['entity'],
                      model_path=config['trained']['model'], 
-                     output_dir=config['output']['dir'])
+                     output_dir=config['output']['dir'], 
+                     word_embed_path=config['embed']['word'])
     
 
 # train model

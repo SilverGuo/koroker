@@ -23,6 +23,14 @@ def create_logger(log_name, log_path):
     logging.getLogger().addHandler(handler)
     return logger
 
+
+# numpy matrix save
+def embed_to_npy(data, embed_path):
+    if not os.path.exists(os.path.dirname(embed_path)):
+        os.makedirs(os.path.dirname(embed_path))
+    np.save(embed_path, data)
+    return
+
 # numpy matrix load
 def embed_from_npy(embed_path):
     if embed_path is not None:
