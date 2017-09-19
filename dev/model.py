@@ -330,16 +330,10 @@ class DeepNER(object):
                                                                       idx, 
                                                                       train_loss))
             
-        accuracy, f1 = self.run_evaluate(sess, train, entity_dict)
-        self.logger.info("train acc {:04.2f}, f1 {:04.2f}".format(100*accuracy, 
-                                                                  100*f1))
         accuracy, f1 = self.run_evaluate(sess, dev, entity_dict)
         self.logger.info("dev acc {:04.2f}, f1 {:04.2f}".format(100*accuracy, 
                                                                 100*f1))
-         # test set
-        accuracy, f1 = self.run_evaluate(sess, test, entity_dict)
-        self.logger.info("test acc {:04.2f}, f1 {:04.2f}".format(100*accuracy, 
-                                                                 100*f1))
+        
         return accuracy, f1
 
     # run evaluate
@@ -402,6 +396,11 @@ class DeepNER(object):
                                                              self.config.num_epoch))
             
                 accuracy, f1 = self.run_epoch(sess, train, dev, entity_dict, epoch)
+
+                # test set
+                accuracy, f1 = self.run_evaluate(sess, test, entity_dict)
+                self.logger.info("test acc {:04.2f}, f1 {:04.2f}".format(100*accuracy, 
+                                                                         100*f1))
 
                 # learning rate decay
                 self.config.lr *= self.config.lr_decay
