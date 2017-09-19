@@ -43,16 +43,16 @@ def preprocess(config):
     dev_set = DataNER(config.dev_path, config, conll_norm)
     test_set = DataNER(config.test_path, config, conll_norm)
 
-    # create vocab
+    # create vocab from train
     vword, vchar = train_set.create_vocab()
 
-    # union with dev and test
+    # create vocab from dev and test
     vword_dev, vchar_dev = dev_set.create_vocab()
     vword_test, vchar_test = test_set.create_vocab()
 
+    # union with dev and test
     vword = vword.union(vword_dev).union(vword_test)
     vchar = vchar.union(vchar_dev).union(vchar_test)
-
 
     # create entity dict
     entity_dict = train_set.create_entity()

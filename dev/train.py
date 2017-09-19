@@ -46,7 +46,7 @@ def train_model(config):
     entity_dict = load_pickle(config.entity_path)
 
     # train
-    model.train(train, dev, entity_dict)
+    model.train(train, dev, test, entity_dict)
     return
 
 
