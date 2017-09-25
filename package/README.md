@@ -1,6 +1,8 @@
-# sequence labeling
+# koroker
 
-a sequence labeling package with following usage
+**python** package for ***sequence labeling*** 
+
+## following usage
 - name entity recognition
 - pos tagging
 - ...

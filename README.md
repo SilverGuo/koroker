@@ -1,4 +1,8 @@
 # koroker
-name entity recognition
+name entity recognition by python
 
-## to be done
+## content
+- python package
+- dev code
+
+ 
