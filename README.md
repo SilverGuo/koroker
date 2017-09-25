@@ -1,5 +1,5 @@
 # koroker
-name entity recognition by python
+sequence labeling by python
 
 ## content
 - python package
