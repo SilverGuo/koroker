@@ -1,12 +1,13 @@
 from setuptools import setup
 
-REQUIREMENTS = ['pip>=9.0.0, <10.0.0', ]
+REQUIREMENTS = ['pip>=9.0.0, <10.0.0',
+                'tensorflow>=1.3.0, tensorflow<2.0.0', ]
 
 setup(
     name='koroker',
     version='0.0.1',
-    description='Python package for sequence labeling',
-    url='https://github.com/SilverGuo/koroker',
+    description='python package for sequence labeling',
+    url='https://gitlab.com/SilverGuo/koroker',
     author='Yuhan',
     author_email='guoyuhan819@gmail.com',
     license='MIT',
