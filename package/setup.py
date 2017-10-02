@@ -15,7 +15,7 @@ setup(
     install_requires=REQUIREMENTS,
     packages=['koroker', ],
     classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 2 - Pre-Alpha',
 
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
 
