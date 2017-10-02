@@ -1,10 +1,8 @@
-# std lib
 from abc import ABCMeta, abstractmethod
 
-# ext lib
 import six
+from six.moves import configparser
 
-# package
 from .utils.type_check import check_string_list
 
 
@@ -17,3 +15,17 @@ class BaseSeqLabel:
     def analysis(self, doc):
         if not check_string_list(doc):
             raise ValueError('doc must be string list')
+
+
+# base class for config
+@six.with_metaclass(ABCMeta)
+class BaseConfig:
+
+    def __init__(self, config_path):
+        self.config = configparser.ConfigParser()
+        self.config.read(config_path)
+
+    # load parameter
+    @abstractmethod
+    def load_param(self):
+        pass
