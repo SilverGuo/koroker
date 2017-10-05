@@ -21,11 +21,7 @@ class BaseSeqLabel:
 @six.with_metaclass(ABCMeta)
 class BaseConfig:
 
+    @abstractmethod
     def __init__(self, config_path):
         self.config = configparser.ConfigParser()
         self.config.read(config_path)
-
-    # load parameter
-    @abstractmethod
-    def load_param(self):
-        pass

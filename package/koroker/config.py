@@ -12,7 +12,7 @@ class ConfigLstmCrf(BaseConfig):
         # io
         input_path = self.config['io']['input']
         self.data_path = os.path.join(input_path, '_data.pkl')
-        self.dict_path = os.path.join(input_path, '_dict.pkl')
+        self.vocab_path = os.path.join(input_path, '_vocab.pkl')
         output_dir = self.config['io']['output']
         self.model_dir = os.path.join(output_dir, 'model/')
         self.summary_dir = os.path.join(output_dir, 'summary/')
