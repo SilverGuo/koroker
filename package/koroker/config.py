@@ -3,6 +3,34 @@ import os
 from .base import BaseConfig
 
 
+class ConfigPrep(BaseConfig):
+
+    def __init__(self, config_path):
+        # parser config
+        super(ConfigPrep, self).__init__(config_path)
+
+        # io
+        self.train_path = self.config['io']['train']
+        self.dev_path = self.config['io']['dev']
+        self.test_path = self.config['io']['test']
+        output_path = self.config['io']['output']
+        self.data_path = os.path.join(output_path, '_data.pkl')
+        self.vocab_path = os.path.join(output_path, '_vocab.pkl')
+
+        # embed
+        self.use_word = self.config['embed'].getboolean('use_word', True)
+        self.use_char = self.config['embed'].getboolean('use_char', False)
+        self.word_in_path = self.config['embed'].get('word_embed', '/fake_path')
+        self.char_in_path = self.config['embed'].get('char_embed', '/fake_path')
+        self.word_out_path = os.path.join(output_path, '_word_embed.npy')
+        self.char_out_path = os.path.join(output_path, '_char_embed.npy')
+
+        # text process
+        self.max_vocab = self.config['text'].getint('max_vocab', 25000)
+        self.lower_word = self.config['text'].getboolean('lower_word', True)
+        self.norm_digit = self.config['text'].getboolean('norm_digit', True)
+
+
 class ConfigLstmCrf(BaseConfig):
 
     def __init__(self, config_path):
