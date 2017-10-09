@@ -10,7 +10,7 @@ class ConfigLstmCrf(BaseConfig):
         super(ConfigLstmCrf, self).__init__(config_path)
 
         # io
-        input_path = self.config['io']['input']
+        input_path = self.config['io'].get('input', '/fake_path')
         self.data_path = os.path.join(input_path, '_data.pkl')
         self.vocab_path = os.path.join(input_path, '_vocab.pkl')
         output_dir = self.config['io']['output']
@@ -27,7 +27,7 @@ class ConfigLstmCrf(BaseConfig):
         self.char_embed_dim = self.config['embed'].getint('char_dim', 100)
 
         # checkpoint
-        self.trained_path = self.config['checkpoint'].get('model', False)
+        self.trained_model_path = self.config['checkpoint'].get('model', False)
 
         # computation graph
         self.has_char = self.config['graph'].getboolean('char', True)
@@ -40,7 +40,7 @@ class ConfigLstmCrf(BaseConfig):
         self.batch_size = self.config['train'].getint('batch', 20)
         self.lr = self.config['train'].getfloat('lr', 0.001)
         self.lr_method = self.config['train'].get('opt', 'adam')
-        self.lr_decay = self.config['train'].getfloat('decay', 0.9)
+        self.lr_decay = self.config['train'].getfloat('decay', 1.0)
         self.early_stop = self.config['train'].getint('early', 3)
 
         # hyper parameter

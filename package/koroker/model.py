@@ -1,8 +1,11 @@
+import os
+
 import tensorflow as tf
+import numpy as np
 
 from .base import BaseSeqLabel
 from .utils.pipeline import embed_from_npy, load_pickle
-from .utils.date_process import pad_batch
+from .utils.date_process import pad_batch, create_batch
 from .config import ConfigLstmCrf
 
 
@@ -36,7 +39,7 @@ class ModelLstmCrf(BaseSeqLabel):
         self.char_lstm_output = None
         self.word_lstm_output = None
         self.logits = None
-        self.pred_tag = None
+        self.label_pred = None
         self.transition_param = None
         self.loss = None
         self.train_op = None
@@ -222,7 +225,7 @@ class ModelLstmCrf(BaseSeqLabel):
     # add pred without crf
     def add_pred_no_crf(self):
         if not self.config.has_crf:
-            self.pred_tag = tf.cast(tf.argmax(self.logits, axis=2), tf.int32)
+            self.label_pred = tf.cast(tf.argmax(self.logits, axis=2), tf.int32)
 
     # add loss op
     def add_loss_op(self):
@@ -258,7 +261,7 @@ class ModelLstmCrf(BaseSeqLabel):
             elif self.config.lr_method == 'rmsprop':
                 optimizer = tf.train.RMSPropOptimizer(self.config.lr)
             else:
-                raise NotImplementedError(
+                raise ValueError(
                     'Unknown optimizer {}'.format(self.config.lr_method))
 
         # gradient clip
@@ -291,9 +294,9 @@ class ModelLstmCrf(BaseSeqLabel):
         self.add_init_op()
 
     # feed dict for model
-    def build_feed_dict(self, doc, label=None, dropout=None):
+    def build_feed_dict(self, sample, label=None, dropout=None):
         # word id list
-        word_id, seq_len = pad_batch(doc['word_id'], 0)
+        word_id, seq_len = pad_batch(sample['word_id'], 0)
 
         # build feed dict
         feed = {
@@ -303,7 +306,7 @@ class ModelLstmCrf(BaseSeqLabel):
 
         # if has char lstm
         if self.config.lstm_char:
-            char_id, word_len = pad_batch(doc['char_id'], 0, 'char')
+            char_id, word_len = pad_batch(sample['char_id'], 0, 'char')
             feed[self.char_id] = char_id
             feed[self.word_len] = word_len
 
@@ -318,5 +321,137 @@ class ModelLstmCrf(BaseSeqLabel):
 
         return feed, seq_len
 
+    # prepare data for train
+    def prepare_data(self):
+        data = load_pickle(self.config.data_path)
+        return data['train'], data['dev'], data['test']
+
+    # run epoch
+    def run_epoch(self, sess, train, dev, epoch):
+        # number of batch
+        num_batch = (len(train[1])+self.config.batch_size-1) // self.config.batch_size
+
+        for idx, (sample, label) in enumerate(create_batch(train,
+                                                           self.config.batch_size,
+                                                           self.config.has_char)):
+
+            feed_dict, _ = self.build_feed_dict(sample, label)
+
+            _, train_loss, summary = \
+                sess.run([self.train_op, self.loss, self.summary_merge],
+                         feed_dict=feed_dict)
+
+            if idx % 10 == 0:
+                self.file_writer.add_summary(summary, epoch * num_batch + idx)
+                print('epoch {} batch {}, train loss {:04.2f}'.format(epoch,
+                                                                      idx,
+                                                                      train_loss))
+
+        accuracy, f1 = self.run_evaluate(sess, dev)
+        self.logger.info("dev acc {:04.2f}, f1 {:04.2f}".format(100*accuracy,
+                                                                100*f1))
+
+        return accuracy, f1
+
+    # batch predict
+    def predict_batch(self, sess, sample):
+        # get the feed dict
+        feed_dict, seq_len = self.build_feed_dict(sample)
+
+        if self.config.has_crf:
+            seq_viterbi = []
+            logits, transition_param = sess.run([self.logits, self.transition_param],
+                                                feed_dict=feed_dict)
+            # viterbi loop
+            for logit, lseq in zip(logits, seq_len):
+                # seq mask
+                logit = logit[:lseq]
+                viterbi, _ = tf.contrib.crf.viterbi_decode(logit,
+                                                           transition_param)
+                seq_viterbi.append(viterbi)
+
+            return seq_viterbi, seq_len
+
+        else:
+            # prediction without crf
+            label_pred = sess.run(self.label_pred, feed_dict=feed_dict)
+
+            return label_pred, seq_len
+
+    # run evaluate
+    def run_evaluate(self, sess, data):
+        # accuracy sequence
+        seq_accuracy = []
+
+        for sample, label in create_batch(data, self.config.batch_size):
+            label_pred, seq_len = self.predict_batch(sess, sample)
+
+            for y, y_pred, lseq in zip(label, label_pred, seq_len):
+                # mask
+                y = y[:lseq]
+                y_pred = y_pred[:lseq]
+
+                seq_accuracy += [r == p for (r, p) in zip(y, y_pred)]
+
+        accuracy = np.mean(seq_accuracy)
+        # if no f1 defined
+        f1 = accuracy
+        return accuracy, f1
+
+    # train model
+    def train(self):
+
+        saver = tf.train.Saver()
+
+        # early stop
+        best_score = 0.0
+        num_epoch_no_improve = 0
+
+        # load and split data
+        train, dev, test = self.prepare_data()
+
+        with tf.Session() as sess:
+            sess.run(self.var_init)
+
+            # load trained model
+            if self.config.load_model:
+                self.logger.info('load trained model from '+self.config.trained_model_path)
+                saver.restore(sess, self.config.trained_model_path)
+
+            # tensorboard
+            self.add_summary(sess)
+
+            # train epoch
+            for epoch in range(self.config.num_epoch):
+                # epoch start
+                self.logger.info('epoch {} out of {}'.format(epoch + 1,
+                                                             self.config.num_epoch))
+
+                # run epoch
+                accuracy, f1 = self.run_epoch(sess, train, dev, epoch)
+
+                # learning rate decay
+                self.config.lr *= self.config.lr_decay
+
+                # early stop
+                if f1 >= best_score:
+                    num_epoch_no_improve = 0
+                    if not os.path.exists(self.config.model_dir):
+                        os.makedirs(self.config.model_dir)
+                    saver.save(sess,
+                               os.path.join(self.config.model_dir, 'alpha'),
+                               global_step=epoch)
+                    best_score = f1
+                    self.logger.info('new best score {:04.2f}'.format(best_score))
+
+                else:
+                    num_epoch_no_improve += 1
+                    if num_epoch_no_improve > self.config.early_stop:
+                        self.logger.info('early stop {} without improvement'.format(num_epoch_no_improve))
+
+                        # stop train
+                        break
+
+    # need to implement
     def analysis(self, doc):
         super(ModelLstmCrf, self).analysis(doc)

@@ -38,3 +38,63 @@ def pad_batch(batch, tok=0, level='word'):
         raise ValueError('level must be word or char, got {}'.format(level))
 
     return batch_padded, batch_len
+
+
+# create batch
+def create_batch(data, batch_size, has_char=True):
+    # x, y
+    x_batch = {'word_id': [], 'char_id': []}
+    y_batch = []
+    for idx in range(len(data[1])):
+        if len(y_batch) == batch_size:
+            yield x_batch, y_batch
+            x_batch = {'word_id': [], 'char_id': []}
+            y_batch = []
+
+        x_batch['word_id'].append(data[0]['word_id'][idx])
+        if has_char:
+            x_batch['char_id'].append(data[0]['char_id'][idx])
+        y_batch.append(data[1][idx])
+
+    # rest
+    if len(y_batch) != 0:
+        yield x_batch, y_batch
+
+
+# get label by chunk
+def label_chunk(label, label_dict):
+    idx_other = label_dict['O']
+    idx_dict = {idx: entity for entity, idx in label_dict.items()}
+
+    seq_chunk = []
+    chunk_type, chunk_start = None, None
+
+    for idx, tok in enumerate(label):
+
+        # end of chunk
+        if tok == idx_other and chunk_type is not None:
+            chunk = (chunk_type, chunk_start, idx)
+            # add to list
+            seq_chunk.append(chunk)
+            chunk_type, chunk_start = None, None
+
+        # next chunk
+        elif tok != idx_other:
+            tok_class = idx_dict[tok].split('-')[0]
+            tok_type = idx_dict[tok].split('-')[1]
+            # new chunk
+            if chunk_type is None:
+                chunk_type, chunk_start = tok_type, idx
+            elif tok_type != chunk_type or tok_class == "B":
+                chunk = (chunk_type, chunk_start, idx)
+                seq_chunk.append(chunk)
+                chunk_type, chunk_start = tok_type, idx
+        else:
+            pass
+
+    # end
+    if chunk_type is not None:
+        chunk = (chunk_type, chunk_start, len(label))
+        seq_chunk.append(chunk)
+
+    return seq_chunk
