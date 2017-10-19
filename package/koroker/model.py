@@ -4,7 +4,7 @@ import tensorflow as tf
 import numpy as np
 
 from .base import BaseSeqLabel
-from .utils.pipeline import embed_from_npy, load_pickle
+from .utils.data_io import embed_from_npy, load_pickle
 from .utils.date_process import pad_batch, create_batch
 from .config import ConfigLstmCrf
 

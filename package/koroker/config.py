@@ -13,6 +13,7 @@ class ConfigPrep(BaseConfig):
         self.train_path = self.config['io']['train']
         self.dev_path = self.config['io']['dev']
         self.test_path = self.config['io']['test']
+        self.file_format = self.config['io']['format']
         output_path = self.config['io']['output']
         self.data_path = os.path.join(output_path, '_data.pkl')
         self.vocab_path = os.path.join(output_path, '_vocab.pkl')
