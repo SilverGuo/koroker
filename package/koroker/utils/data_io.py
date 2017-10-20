@@ -19,6 +19,14 @@ def load_pickle(path):
     return data
 
 
+# save numpy
+def embed_to_npy(data, embed_path):
+    if not os.path.exists(os.path.dirname(embed_path)):
+        os.makedirs(os.path.dirname(embed_path))
+    np.save(embed_path, data)
+    return
+
+
 # numpy matrix load
 def embed_from_npy(embed_path):
     return np.load(embed_path)

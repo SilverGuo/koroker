@@ -1,3 +1,75 @@
+from collections import Counter
+
+import numpy as np
+
+UNK = 'unk'
+
+
+# load embed from txt
+def load_embed(embed_path):
+    embed_dict = dict()
+    with open(embed_path, 'r') as f:
+        for line in f.readlines():
+            line = line.strip()
+            if line != '':
+                vec = line.split()
+                embed_dict[vec[0]] = [float(v) for v in vec[1:]]
+    return embed_dict
+
+
+# prepare embed
+def prepare_embed(vocab, embed):
+    vocab_embed = []
+    for tok in vocab:
+        vocab_embed.append(embed[tok])
+    return np.array(vocab_embed, dtype=np.float32)
+
+
+# create vocab dict from tokenized sentence list
+def create_vocab(sample_tok, max_word=25000, max_char=100,
+                 word_lower=True):
+    # vocab
+    word_counter = Counter()
+    char_counter = Counter()
+
+    # traverse
+    for sentence in sample_tok:
+        for tok in sentence:
+            for c in tok:
+                char_counter[c] += 1
+            if word_lower:
+                tok = tok.lower()
+                word_counter[tok] += 1
+
+    # vocab size limit
+    word_vocab = [t[0] for t in word_counter.most_common(max_word-1)]
+    word_vocab.append(UNK)
+    char_vocab = [t[0] for t in char_counter.most_common(max_char-1)]
+    char_vocab.append(UNK)
+    return word_vocab, char_vocab
+
+
+# create label dict
+def create_label(label):
+    label_vocab = set()
+    for sentence in label:
+        for l in sentence:
+            label_vocab.add(l)
+    label_dict = dict()
+    for idx, l in enumerate(list(label_vocab)):
+        label_dict[l] = idx
+    return label_dict
+
+
+# vocab mapping from token list
+def vocab_mapping(tok_list):
+    tok_idx, idx_tok = dict(), dict()
+    for idx, tok in enumerate(tok_list):
+        tok_idx[tok] = idx
+        idx_tok[idx] = tok
+    return tok_idx, idx_tok
+
+
 # padding for sequence list
 def pad_seq_list(lseq, tok, max_len):
     seq_list_padded = []

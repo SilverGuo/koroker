@@ -424,7 +424,7 @@ class ModelLstmCrf(BaseSeqLabel):
             # train epoch
             for epoch in range(self.config.num_epoch):
                 # epoch start
-                self.logger.info('epoch {} out of {}'.format(epoch + 1,
+                self.logger.info('epoch {} out of {}'.format(epoch+1,
                                                              self.config.num_epoch))
 
                 # run epoch

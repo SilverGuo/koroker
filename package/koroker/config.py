@@ -26,10 +26,12 @@ class ConfigPrep(BaseConfig):
         self.word_out_path = os.path.join(output_path, '_word_embed.npy')
         self.char_out_path = os.path.join(output_path, '_char_embed.npy')
 
+        # vocab
+        self.max_word_vocab = self.config['vocab'].getint('max_word', 25000)
+        self.max_char_vocab = self.config['vocab'].getint('max_char', 100)
+
         # text process
-        self.max_vocab = self.config['text'].getint('max_vocab', 25000)
         self.lower_word = self.config['text'].getboolean('lower_word', True)
-        self.norm_digit = self.config['text'].getboolean('norm_digit', True)
 
 
 class ConfigLstmCrf(BaseConfig):
