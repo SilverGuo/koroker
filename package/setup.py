@@ -13,7 +13,6 @@ setup(
     author_email='guoyuhan819@gmail.com',
     license='MIT',
     install_requires=REQUIREMENTS,
-    packages=['koroker', ],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
 
