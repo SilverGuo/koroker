@@ -1,8 +1,10 @@
 # koroker
-sequence labeling by python
 
-## content
-- python package
-- dev code
+**python package for sequence labeling** 
 
- 
+## following usage
+- name entity recognition
+- pos tagging
+- ...
+
+

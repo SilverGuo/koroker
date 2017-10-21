@@ -8,11 +8,12 @@ setup(
     name='koroker',
     version='0.0.1',
     description='python package for sequence labeling',
-    url='https://gitlab.com/SilverGuo/koroker',
+    url='https://github.com/silverguo/koroker',
     author='Yuhan',
     author_email='guoyuhan819@gmail.com',
     license='MIT',
     install_requires=REQUIREMENTS,
+    packages=['koroker', 'koroker.prepare', 'koroker.ner'],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
 
