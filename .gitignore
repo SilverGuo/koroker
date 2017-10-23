@@ -6,3 +6,7 @@
 
 # idea
 .idea
+
+build
+dist
+koroker.egg-info

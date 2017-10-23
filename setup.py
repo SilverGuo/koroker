@@ -2,7 +2,8 @@ from setuptools import setup
 
 REQUIREMENTS = ['pip>=9.0.0, <10.0.0',
                 'tensorflow>=1.3.0, <2.0.0',
-                'six>=1.11.0, <2.0.0', ]
+                'six>=1.11.0, <2.0.0',
+                'numpy>1.13.1', ]
 
 setup(
     name='koroker',

@@ -1,4 +1,5 @@
 from ..base import BasePrepare
+from ..config import ConfigPrep
 from .data_set import DataNer
 from ..utils.data_io import read_conll, embed_to_npy, save_pickle
 from ..utils.date_process import create_vocab, create_label, \
@@ -8,7 +9,7 @@ from ..utils.date_process import create_vocab, create_label, \
 class PrepareNer(BasePrepare):
 
     def __init__(self, config_path):
-        super(PrepareNer, self).__init__(config_path)
+        self.config = ConfigPrep(config_path)
 
         self.train, self.dev, self.test = self.load_data()
 

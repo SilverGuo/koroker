@@ -4,11 +4,10 @@ import six
 from six.moves import configparser
 
 from .utils.type_check import check_string_list
-from .config import ConfigPrep
 
 
 # base class for sequence labeling
-@six.with_metaclass(ABCMeta)
+@six.add_metaclass(ABCMeta)
 class BaseSeqLabel:
 
     # sequence labeling for document
@@ -19,11 +18,8 @@ class BaseSeqLabel:
 
 
 # base class for data prepare
-@six.with_metaclass(ABCMeta)
+@six.add_metaclass(ABCMeta)
 class BasePrepare:
-
-    def __init__(self, config_path):
-        self.config = ConfigPrep(config_path)
 
     @abstractmethod
     def load_data(self):
@@ -39,7 +35,7 @@ class BasePrepare:
 
 
 # base class for config
-@six.with_metaclass(ABCMeta)
+@six.add_metaclass(ABCMeta)
 class BaseConfig:
 
     @abstractmethod
