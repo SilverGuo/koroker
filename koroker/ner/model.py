@@ -1,7 +1,7 @@
 import numpy as np
 
 from ..model import ModelLstmCrf
-from ..utils.date_process import create_batch, label_chunk
+from ..utils.data_process import create_batch, label_chunk
 
 
 # modified lstm crf for ner

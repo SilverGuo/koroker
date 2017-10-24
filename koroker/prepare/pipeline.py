@@ -2,7 +2,7 @@ from ..base import BasePrepare
 from ..config import ConfigPrep
 from .data_set import DataNer
 from ..utils.data_io import read_conll, embed_to_npy, save_pickle
-from ..utils.date_process import create_vocab, create_label, \
+from ..utils.data_process import create_vocab, create_label, \
     load_embed, prepare_embed, vocab_mapping
 
 
@@ -70,6 +70,7 @@ class PrepareNer(BasePrepare):
 
         # vocab
         vocab_dict = dict()
+        vocab_dict['sample'] = dict()
         vocab_dict['sample']['word'] = word_idx
         vocab_dict['sample']['char'] = char_idx
         vocab_dict['label'] = label_dict

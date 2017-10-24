@@ -5,7 +5,7 @@ import numpy as np
 
 from .base import BaseSeqLabel
 from .utils.data_io import embed_from_npy, load_pickle
-from .utils.date_process import pad_batch, create_batch
+from .utils.data_process import pad_batch, create_batch
 from .config import ConfigLstmCrf
 
 
@@ -305,7 +305,7 @@ class ModelLstmCrf(BaseSeqLabel):
         }
 
         # if has char lstm
-        if self.config.lstm_char:
+        if self.config.has_char:
             char_id, word_len = pad_batch(sample['char_id'], 0, 'char')
             feed[self.char_id] = char_id
             feed[self.word_len] = word_len
@@ -348,8 +348,8 @@ class ModelLstmCrf(BaseSeqLabel):
                                                                       train_loss))
 
         accuracy, f1 = self.run_evaluate(sess, dev)
-        self.logger.info("dev acc {:04.2f}, f1 {:04.2f}".format(100*accuracy,
-                                                                100*f1))
+        self.config.logger.info("dev acc {:04.2f}, f1 {:04.2f}".format(100*accuracy,
+                                                                       100*f1))
 
         return accuracy, f1
 
@@ -414,8 +414,8 @@ class ModelLstmCrf(BaseSeqLabel):
             sess.run(self.var_init)
 
             # load trained model
-            if self.config.load_model:
-                self.logger.info('load trained model from '+self.config.trained_model_path)
+            if self.config.trained_model_path:
+                self.config.logger.info('load trained model from '+self.config.trained_model_path)
                 saver.restore(sess, self.config.trained_model_path)
 
             # tensorboard
@@ -424,8 +424,8 @@ class ModelLstmCrf(BaseSeqLabel):
             # train epoch
             for epoch in range(self.config.num_epoch):
                 # epoch start
-                self.logger.info('epoch {} out of {}'.format(epoch+1,
-                                                             self.config.num_epoch))
+                self.config.logger.info('epoch {} out of {}'.format(epoch+1,
+                                                                    self.config.num_epoch))
 
                 # run epoch
                 accuracy, f1 = self.run_epoch(sess, train, dev, epoch)
@@ -442,12 +442,12 @@ class ModelLstmCrf(BaseSeqLabel):
                                os.path.join(self.config.model_dir, 'alpha'),
                                global_step=epoch)
                     best_score = f1
-                    self.logger.info('new best score {:04.2f}'.format(best_score))
+                    self.config.logger.info('new best score {:04.2f}'.format(best_score))
 
                 else:
                     num_epoch_no_improve += 1
                     if num_epoch_no_improve > self.config.early_stop:
-                        self.logger.info('early stop {} without improvement'.format(num_epoch_no_improve))
+                        self.config.logger.info('early stop {} without improvement'.format(num_epoch_no_improve))
 
                         # stop train
                         break

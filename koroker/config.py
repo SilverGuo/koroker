@@ -1,6 +1,7 @@
 import os
 
 from .base import BaseConfig
+from .utils.logger import new_logger
 
 
 class ConfigPrep(BaseConfig):
@@ -15,16 +16,16 @@ class ConfigPrep(BaseConfig):
         self.test_path = self.config['io']['test']
         self.file_format = self.config['io']['format']
         output_path = self.config['io']['output']
-        self.data_path = os.path.join(output_path, '_data.pkl')
-        self.vocab_path = os.path.join(output_path, '_vocab.pkl')
+        self.data_path = os.path.join(output_path, 'data.pkl')
+        self.vocab_path = os.path.join(output_path, 'vocab.pkl')
 
         # embed
         self.use_word = self.config['embed'].getboolean('use_word', True)
         self.use_char = self.config['embed'].getboolean('use_char', False)
         self.word_in_path = self.config['embed'].get('word_embed', '/fake_path')
         self.char_in_path = self.config['embed'].get('char_embed', '/fake_path')
-        self.word_out_path = os.path.join(output_path, '_word_embed.npy')
-        self.char_out_path = os.path.join(output_path, '_char_embed.npy')
+        self.word_out_path = os.path.join(output_path, 'word_embed.npy')
+        self.char_out_path = os.path.join(output_path, 'char_embed.npy')
 
         # vocab
         self.max_word_vocab = self.config['vocab'].getint('max_word', 25000)
@@ -42,16 +43,16 @@ class ConfigLstmCrf(BaseConfig):
 
         # io
         input_path = self.config['io'].get('input', '/fake_path')
-        self.data_path = os.path.join(input_path, '_data.pkl')
-        self.vocab_path = os.path.join(input_path, '_vocab.pkl')
+        self.data_path = os.path.join(input_path, 'data.pkl')
+        self.vocab_path = os.path.join(input_path, 'vocab.pkl')
         output_dir = self.config['io']['output']
         self.model_dir = os.path.join(output_dir, 'model/')
         self.summary_dir = os.path.join(output_dir, 'summary/')
         self.log_path = os.path.join(output_dir, 'log.txt')
 
         # embed
-        self.word_embed_path = os.path.join(input_path, '_word_embed.npy')
-        self.char_embed_path = os.path.join(input_path, '_char_embed.npy')
+        self.word_embed_path = os.path.join(input_path, 'word_embed.npy')
+        self.char_embed_path = os.path.join(input_path, 'char_embed.npy')
         self.use_word_embed = self.config['embed'].getboolean('use_word', True)
         self.use_char_embed = self.config['embed'].getboolean('use_char', False)
         self.word_embed_dim = self.config['embed'].getint('word_dim', 300)
@@ -78,3 +79,6 @@ class ConfigLstmCrf(BaseConfig):
         self.word_lstm_hidden = self.config['hyper'].getint('word_hidden', 300)
         self.char_lstm_hidden = self.config['hyper'].getint('char_hidden', 100)
         self.grad_clip = self.config['hyper'].getfloat('grad_clip', 5.0)
+
+        # log
+        self.logger = new_logger('train_alpha', self.log_path)

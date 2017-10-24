@@ -46,7 +46,7 @@ def create_vocab(sample_tok, max_word=25000, max_char=100,
     word_vocab.append(UNK)
     char_vocab = [t[0] for t in char_counter.most_common(max_char-1)]
     char_vocab.append(UNK)
-    return word_vocab, char_vocab
+    return set(word_vocab), set(char_vocab)
 
 
 # create label dict
