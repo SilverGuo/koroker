@@ -14,7 +14,7 @@ setup(
     author_email='guoyuhan819@gmail.com',
     license='MIT',
     install_requires=REQUIREMENTS,
-    packages=['koroker', 'koroker.prepare', 'koroker.ner'],
+    packages=['koroker', 'koroker.prepare', 'koroker.ner',  'koroker.utils'],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
 
