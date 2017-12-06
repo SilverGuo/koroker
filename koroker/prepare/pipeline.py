@@ -24,8 +24,8 @@ class PrepareNer(BasePrepare):
         else:
             read_file = read_conll
         return DataNer(self.config.train_path, read_file), \
-            DataNer(self.config.train_path, read_file), \
-            DataNer(self.config.train_path, read_file)
+            DataNer(self.config.dev_path, read_file), \
+            DataNer(self.config.test_path, read_file)
 
     def process_data(self):
         # vocab from data set
