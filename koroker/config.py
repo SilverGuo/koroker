@@ -2,6 +2,7 @@ import os
 
 from .base import BaseConfig
 from .utils.logger import new_logger
+from .utils.data_io import create_dir
 
 
 class ConfigPrep(BaseConfig):
@@ -48,6 +49,8 @@ class ConfigLstmCrf(BaseConfig):
         output_dir = self.config['io']['output']
         self.model_dir = os.path.join(output_dir, 'model/')
         self.summary_dir = os.path.join(output_dir, 'summary/')
+        create_dir(self.model_dir)
+        create_dir(self.summary_dir)
         self.log_path = os.path.join(output_dir, 'log.txt')
 
         # embed
