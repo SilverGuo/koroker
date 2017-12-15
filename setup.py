@@ -7,7 +7,7 @@ REQUIREMENTS = ['pip>=9.0.0, <10.0.0',
 
 setup(
     name='koroker',
-    version='0.0.1',
+    version='0.0.2',
     description='python package for sequence labeling',
     url='https://github.com/silverguo/koroker',
     author='Yuhan',
