@@ -77,31 +77,31 @@ class ModelLstmCrf(BaseSeqLabel):
         # sequence length
         # (batch size)
         self.seq_len = tf.placeholder(tf.int32,
-                                      shape=[self.config.batch_size],
+                                      shape=[None],
                                       name='seq_len')
 
         # word id list
         # (batch size, max len in batch)
         self.word_id = tf.placeholder(tf.int32,
-                                      shape=[self.config.batch_size, None],
+                                      shape=[None, None],
                                       name='word_id')
 
         # word length
         # (batch size, max len in batch)
         self.word_len = tf.placeholder(tf.int32,
-                                       shape=[self.config.batch_size, None],
+                                       shape=[None, None],
                                        name='word_len')
 
         # char id list
         # (batch size, max len in batch, max length of word)
         self.char_id = tf.placeholder(tf.int32,
-                                      shape=[self.config.batch_size, None, None],
+                                      shape=[None, None, None],
                                       name='char_id')
 
         # label
         # (batch size, max len in batch)
         self.label = tf.placeholder(tf.int32,
-                                    shape=[self.config.batch_size, None],
+                                    shape=[None, None],
                                     name='label')
 
         # hyper param
