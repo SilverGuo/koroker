@@ -46,3 +46,8 @@ class DataNer:
 
         # data for training
         self.data = (sample, label_vec)
+
+class OutVoc(DataNer):
+    def __init__(self, oov_set):
+        self.sample_tok = [o[0] for o in oov_set]
+        self.label = [o[1] for o in oov_set]

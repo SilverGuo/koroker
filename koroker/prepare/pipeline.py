@@ -1,7 +1,8 @@
 from ..base import BasePrepare
 from ..config import ConfigPrep
-from .data_set import DataNer
-from ..utils.data_io import read_conll, embed_to_npy, save_pickle
+from .data_set import DataNer, OutVoc
+from ..utils.data_io import read_conll, embed_to_npy,\
+ save_pickle, find_entities, filter_test
 from ..utils.data_process import create_vocab, create_label, \
     load_embed, prepare_embed, vocab_mapping
 
@@ -13,6 +14,7 @@ class PrepareNer(BasePrepare):
 
         self.train, self.dev, self.test = self.load_data()
 
+        self.oov_set = self.build_oov()
         self.vocab_dict = self.process_data()
 
         # output data and vocab
@@ -21,8 +23,11 @@ class PrepareNer(BasePrepare):
     def load_data(self):
         if self.config.file_format == 'conll':
             read_file = read_conll
+        elif self.config.file_format == "conll2":
+            read_file = read_conll_2col
         else:
             read_file = read_conll
+
         return DataNer(self.config.train_path, read_file), \
             DataNer(self.config.dev_path, read_file), \
             DataNer(self.config.test_path, read_file)
@@ -67,6 +72,7 @@ class PrepareNer(BasePrepare):
         self.train.vocab_lookup(word_idx, char_idx, label_dict, self.config.lower_word)
         self.dev.vocab_lookup(word_idx, char_idx, label_dict, self.config.lower_word)
         self.test.vocab_lookup(word_idx, char_idx, label_dict, self.config.lower_word)
+        self.oov_set.vocab_lookup(word_idx, char_idx, label_dict, self.config.lower_word)
 
         # vocab
         vocab_dict = dict()
@@ -77,12 +83,20 @@ class PrepareNer(BasePrepare):
 
         return vocab_dict
 
+    def build_oov(self):
+        train_entities = find_entities(self.train.sample_tok, self.train.label)
+        oov_set = filter_test(self.dev.sample_tok, self.dev.label, set(train_entities))
+        oov_set = OutVoc(oov_set)
+        return oov_set
+
+
     def save_data(self):
 
         data = dict()
         data['train'] = self.train.data
         data['dev'] = self.dev.data
         data['test'] = self.test.data
+        data['oov'] = self.oov_set.data
 
         save_pickle(data, self.config.data_path)
         save_pickle(self.vocab_dict, self.config.vocab_path)
