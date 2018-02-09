@@ -324,10 +324,10 @@ class ModelLstmCrf(BaseSeqLabel):
     # prepare data for train
     def prepare_data(self):
         data = load_pickle(self.config.data_path)
-        return data['train'], data['dev'], data['test']
+        return data['train'], data['dev'], data['test'], data['oov']
 
     # run epoch
-    def run_epoch(self, sess, train, dev, epoch):
+    def run_epoch(self, sess, train, dev, oov, epoch):
         # number of batch
         num_batch = (len(train[1])+self.config.batch_size-1) // self.config.batch_size
 
@@ -348,10 +348,11 @@ class ModelLstmCrf(BaseSeqLabel):
                                                                       train_loss))
 
         accuracy, f1 = self.run_evaluate(sess, dev)
-        self.config.logger.info("dev acc {:04.2f}, f1 {:04.2f}".format(100*accuracy,
-                                                                       100*f1))
+        _, oov_f1 = self.run_evaluate(sess, oov)
+        self.config.logger.info("dev acc {:04.2f}, f1 {:04.2f}, oov f1 {:04.2f}".format(100*accuracy,
+                                                                       100*f1, 100*oov_f1))
 
-        return accuracy, f1
+        return accuracy, f1, oov_f1
 
     # batch predict
     def predict_batch(self, sess, sample):
@@ -408,7 +409,7 @@ class ModelLstmCrf(BaseSeqLabel):
         num_epoch_no_improve = 0
 
         # load and split data
-        train, dev, test = self.prepare_data()
+        train, dev, test, oov = self.prepare_data()
 
         with tf.Session() as sess:
             sess.run(self.var_init)
@@ -428,7 +429,7 @@ class ModelLstmCrf(BaseSeqLabel):
                                                                     self.config.num_epoch))
 
                 # run epoch
-                accuracy, f1 = self.run_epoch(sess, train, dev, epoch)
+                accuracy, f1, oov_f1 = self.run_epoch(sess, train, dev, oov, epoch)
 
                 # learning rate decay
                 self.config.lr *= self.config.lr_decay
